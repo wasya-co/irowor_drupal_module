@@ -1,0 +1,18 @@
+version: '3.2'
+
+services:
+
+  irowor_local:
+    container_name: irowor
+    image: piousbox/php83:0.0.0
+    ports:
+      - 9101:80
+    restart: 'unless-stopped'
+    volumes:
+      - irowor_data:/var/www/html
+      - type: bind
+        source: config/settings.php
+        target: /var/www/html/sites/default/settings.php
+
+volumes:
+  irowor_data:

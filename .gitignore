@@ -1,0 +1,9 @@
+
+/config/*
+!/config/settings.php-example
+
+.DS_Store
+
+/tmp/*
+!/tmp/.keep
+*trash
