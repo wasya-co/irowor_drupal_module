@@ -217,6 +217,7 @@ function irowor_drupal_module_update_9005() {
 **/
 function irowor_drupal_module_update_9019() {
 
+  // create an adv_page
   $alias = '/tmp-3';
   $path_alias_manager = \Drupal::service('path_alias.manager');
   $internal_path = $path_alias_manager->getPathByAlias($alias);
@@ -237,6 +238,7 @@ function irowor_drupal_module_update_9019() {
     $adv_page->save();
   }
 
+  // create a file
   $url = 'https://d15g8hc4183yn4.cloudfront.net/wp-content/uploads/2026/03/28121321/creek-testing.jpg';
   $data = file_get_contents($url);
   $random = bin2hex(random_bytes(4));
@@ -247,10 +249,10 @@ function irowor_drupal_module_update_9019() {
   $file->setPermanent();
   $file->save();
 
+  // create a block
   $block_content = BlockContent::create([
     'type' => 'section_feature_0_0_0',
     'langcode' => 'en',
-
     'field_link' => "/link-to/" . $alias,
     'field_title' => $alias,
     'field_image' => [
@@ -260,7 +262,7 @@ function irowor_drupal_module_update_9019() {
   ]);
   $block_content->save();
 
-
+  // create a section
   $uuid = \Drupal::service('uuid')->generate();
   $component = new SectionComponent($uuid, 'main', [
       'id' => 'block_content:' . $block_content->uuid(),
@@ -268,17 +270,10 @@ function irowor_drupal_module_update_9019() {
       'label_display' => FALSE,
       'provider' => 'block_content',
     ] );
-
   $section = new Section('layout_onecol_any');
   $section->appendComponent($component);
 
-  // $section_storage = \Drupal::service('plugin.manager.layout_builder.section_storage')
-  //   ->load('overrides', [
-  //     'entity' => $adv_page,
-  //   ]);
-  // $section_storage->insertSection(0, $section);
-  // $section_storage->save();
-
+  // save adv_page
   $adv_page->get('layout_builder__layout')->appendItem($section);
   $adv_page->save();
 
