@@ -215,9 +215,9 @@ function irowor_drupal_module_update_9005() {
 /**
  * create an adv page, /tmp-2
 **/
-function irowor_drupal_module_update_9012() {
+function irowor_drupal_module_update_9019() {
 
-  $alias = '/tmp-2';
+  $alias = '/tmp-3';
   $path_alias_manager = \Drupal::service('path_alias.manager');
   $internal_path = $path_alias_manager->getPathByAlias($alias);
   $adv_page = NULL;
@@ -251,8 +251,8 @@ function irowor_drupal_module_update_9012() {
     'type' => 'section_feature_0_0_0',
     'langcode' => 'en',
 
-    'field_link' => '/link-2',
-    'field_title' => 'Title-2',
+    'field_link' => "/link-to/" . $alias,
+    'field_title' => $alias,
     'field_image' => [
       'target_id' => $file->id(),
       'alt' => 'optional',
@@ -262,14 +262,14 @@ function irowor_drupal_module_update_9012() {
 
 
   $uuid = \Drupal::service('uuid')->generate();
-  $component = new SectionComponent($uuid, 'content', [
+  $component = new SectionComponent($uuid, 'main', [
       'id' => 'block_content:' . $block_content->uuid(),
       'label' => 'Section Feature',
       'label_display' => FALSE,
       'provider' => 'block_content',
     ] );
 
-  $section = new Section('layout_onecol');
+  $section = new Section('layout_onecol_any');
   $section->appendComponent($component);
 
   // $section_storage = \Drupal::service('plugin.manager.layout_builder.section_storage')
@@ -283,5 +283,27 @@ function irowor_drupal_module_update_9012() {
   $adv_page->save();
 
 }
+
+/**
+ * list sections
+**/
+/* function irowor_drupal_module_update_9015() {
+
+  // $layout_manager = \Drupal::service('plugin.manager.core.layout');
+  // $layouts = $layout_manager->getDefinitions();
+  // foreach ($layouts as $id => $definition) {
+  //   \Drupal::logger('debug')->notice($id . ' => ' . $definition->getLabel());
+  // }
+
+
+  $display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load('node.advanced_page.full');
+  $allowed = $display->getThirdPartySetting('layout_builder', 'allowed_layouts');
+  \Drupal::logger('debug')->notice($allowed);
+} // */
+
+
+
 
 
