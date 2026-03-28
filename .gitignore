@@ -1,5 +1,5 @@
 
-/config/*
+/config/settings.php*
 !/config/settings.php-example
 
 .DS_Store

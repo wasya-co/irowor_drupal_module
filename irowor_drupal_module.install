@@ -1,9 +1,149 @@
 <?php
 
 use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContentType;
+use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\Core\Entity\Entity\EntityViewDisplay;
 
-function irowor_drupal_module_update_9001() {
-  // Your update logic here.
+/**
+ * block type: section_feature_0_0_0
+**/
+function irowor_drupal_module_update_9002() {
+  $block_type_id = 'section_feature_0_0_0';
+
+  $block_type = BlockContentType::load($block_type_id);
+  if ($block_type) {
+    // nothing
+  } else {
+    $block_type = BlockContentType::create([
+      'id' => $block_type_id,
+      'label' => 'section feature 0.0.0',
+      'description' => 'section feature 0.0.0',
+    ]);
+    $block_type->save();
+  }
+
+  // field_link
+  if (!FieldStorageConfig::loadByName('block_content', 'field_link')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_link',
+      'entity_type' => 'block_content',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+  }
+  if (!FieldConfig::loadByName('block_content', $block_type_id, 'field_link')) {
+    FieldConfig::create([
+      'field_name' => 'field_link',
+      'entity_type' => 'block_content',
+      'bundle' => $block_type_id,
+      'label' => 'field_link',
+      'required' => TRUE,
+      'settings' => [
+        'max_length' => 500,
+      ],
+    ])->save();
+  }
+  \Drupal::service('entity_display.repository')
+    ->getViewDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_link', [
+      'label' => 'hidden',
+      'type' => 'string',
+    ])
+    ->save();
+
+
+  // field_title
+  if (!FieldStorageConfig::loadByName('block_content', 'field_title')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_title',
+      'entity_type' => 'block_content',
+      'type' => 'string',
+      'cardinality' => 1,
+    ])->save();
+  }
+  if (!FieldConfig::loadByName('block_content', $block_type_id, 'field_title')) {
+    FieldConfig::create([
+      'field_name' => 'field_title',
+      'entity_type' => 'block_content',
+      'bundle' => $block_type_id,
+      'label' => 'field_title',
+      'required' => TRUE,
+      'settings' => [
+        'max_length' => 500,
+      ],
+    ])->save();
+  }
+  \Drupal::service('entity_display.repository')
+    ->getViewDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_title', [
+      'label' => 'hidden',
+      'type' => 'string',
+    ])
+    ->save();
+
+  // field_is_reverse
+  if (!FieldStorageConfig::loadByName('block_content', 'field_is_reverse')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_is_reverse',
+      'entity_type' => 'block_content',
+      'type' => 'boolean',
+      'cardinality' => 1,
+      'settings' => [
+        'on_label' => 'On',
+        'off_label' => 'Off',
+      ],
+    ])->save();
+  }
+  if (!FieldConfig::loadByName('block_content', $block_type_id, 'field_is_reverse')) {
+    FieldConfig::create([
+      'field_name' => 'field_is_reverse',
+      'entity_type' => 'block_content',
+      'bundle' => $block_type_id,
+      'label' => 'field_is_reverse',
+      'required' => TRUE,
+      'settings' => [
+        'max_length' => 500,
+      ],
+    ])->save();
+  }
+  \Drupal::service('entity_display.repository')
+    ->getViewDisplay('block_content', $block_type_id)
+    ->removeComponent('field_is_reverse')
+    ->save();
+
+
+  // field_image
+  if (!FieldStorageConfig::loadByName('block_content', 'field_image')) {
+    FieldStorageConfig::create([
+      'field_name' => 'field_image',
+      'entity_type' => 'block_content',
+      'type' => 'image',
+      'cardinality' => 1,
+      'settings' => [
+        'uri_scheme' => 'public',
+      ],
+    ])->save();
+  }
+  if (!FieldConfig::loadByName('block_content', $block_type_id, 'field_image')) {
+    FieldConfig::create([
+      'field_name' => 'field_image',
+      'entity_type' => 'block_content',
+      'bundle' => $block_type_id,
+      'label' => 'field_image',
+      'required' => TRUE,
+    ])->save();
+  }
+  \Drupal::service('entity_display.repository')
+    ->getViewDisplay('block_content', $block_type_id)
+    ->setComponent('field_image', [
+      'type' => 'image',
+      'label' => 'hidden',
+    ])
+    ->save();
+
+
 }
 
 

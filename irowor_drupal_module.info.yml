@@ -1,5 +1,9 @@
 name: irowor_drupal_module
 type: module
-description: 'A custom Drupal 10 module.'
+description: 'irowor_drupal_module'
 core_version_requirement: ^10
 package: Custom
+version: VERSION
+dependencies:
+  - drupal:views
+  - drupal:node
