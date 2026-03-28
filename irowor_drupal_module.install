@@ -1,10 +1,20 @@
 <?php
 
 use Drupal\block\Entity\Block;
+use Drupal\block_content\Entity\BlockContent;
 use Drupal\block_content\Entity\BlockContentType;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\Core\File\FileSystemInterface;
+use Drupal\Core\Plugin\Context\EntityContext;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use Drupal\file\Entity\File;
+use Drupal\layout_builder\Section;
+use Drupal\layout_builder\SectionComponent;
+use Drupal\layout_builder\SectionStorage\SectionStorageManagerInterface;
+use Drupal\node\Entity\Node;
+use Drupal\node\Entity\NodeType;
+
 
 /**
  * block type: section_feature_0_0_0
@@ -174,8 +184,104 @@ function irowor_drupal_module_update_9004() {
 }
 
 /**
- * create an adv page
+ * create AdvancedPage advanced_page content_type
 **/
 function irowor_drupal_module_update_9005() {
+  $type = NodeType::create([
+    'type' => 'advanced_page',
+    'name' => 'Advanced Page',
+  ]);
+  $type->save();
+
+  $display_id = 'node.advanced_page.full';
+  $display = \Drupal::entityTypeManager()
+    ->getStorage('entity_view_display')
+    ->load($display_id);
+  if (!$display) {
+    $display = EntityViewDisplay::create([
+      'targetEntityType' => 'node',
+      'bundle' => 'advanced_page',
+      'mode' => 'full',
+      'status' => TRUE,
+    ]);
+  }
+
+  $display->setThirdPartySetting('layout_builder', 'enabled', TRUE);
+  $display->setThirdPartySetting('layout_builder', 'allow_custom', TRUE);
+
+  $display->save();
 }
+
+/**
+ * create an adv page, /tmp-2
+**/
+function irowor_drupal_module_update_9012() {
+
+  $alias = '/tmp-2';
+  $path_alias_manager = \Drupal::service('path_alias.manager');
+  $internal_path = $path_alias_manager->getPathByAlias($alias);
+  $adv_page = NULL;
+  if (preg_match('/^\/node\/(\d+)$/', $internal_path, $matches)) {
+    $nid = $matches[1];
+    $adv_page = \Drupal\node\Entity\Node::load($nid);
+  } else {
+    $adv_page = Node::create([
+      'path' => [
+        'alias' => $alias,
+        'pathauto' => FALSE,
+      ],
+      'status' => 1,
+      'title' => $alias,
+      'type' => 'advanced_page',
+    ]);
+    $adv_page->save();
+  }
+
+  $url = 'https://d15g8hc4183yn4.cloudfront.net/wp-content/uploads/2026/03/28121321/creek-testing.jpg';
+  $data = file_get_contents($url);
+  $random = bin2hex(random_bytes(4));
+  $filename = date('Ymd') . '-' . $random . '.jpg';
+  $destination = 'public://' . $filename;
+  $file_repository = \Drupal::service('file.repository');
+  $file = $file_repository->writeData($data, $destination, FileSystemInterface::EXISTS_REPLACE);
+  $file->setPermanent();
+  $file->save();
+
+  $block_content = BlockContent::create([
+    'type' => 'section_feature_0_0_0',
+    'langcode' => 'en',
+
+    'field_link' => '/link-2',
+    'field_title' => 'Title-2',
+    'field_image' => [
+      'target_id' => $file->id(),
+      'alt' => 'optional',
+    ],
+  ]);
+  $block_content->save();
+
+
+  $uuid = \Drupal::service('uuid')->generate();
+  $component = new SectionComponent($uuid, 'content', [
+      'id' => 'block_content:' . $block_content->uuid(),
+      'label' => 'Section Feature',
+      'label_display' => FALSE,
+      'provider' => 'block_content',
+    ] );
+
+  $section = new Section('layout_onecol');
+  $section->appendComponent($component);
+
+  // $section_storage = \Drupal::service('plugin.manager.layout_builder.section_storage')
+  //   ->load('overrides', [
+  //     'entity' => $adv_page,
+  //   ]);
+  // $section_storage->insertSection(0, $section);
+  // $section_storage->save();
+
+  $adv_page->get('layout_builder__layout')->appendItem($section);
+  $adv_page->save();
+
+}
+
 
