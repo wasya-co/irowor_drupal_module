@@ -2,14 +2,14 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\block_content\Entity\BlockContentType;
-use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\field\Entity\FieldConfig;
 use Drupal\Core\Entity\Entity\EntityViewDisplay;
+use Drupal\field\Entity\FieldConfig;
+use Drupal\field\Entity\FieldStorageConfig;
 
 /**
  * block type: section_feature_0_0_0
 **/
-function irowor_drupal_module_update_9002() {
+function irowor_drupal_module_update_9004() {
   $block_type_id = 'section_feature_0_0_0';
 
   $block_type = BlockContentType::load($block_type_id);
@@ -46,6 +46,12 @@ function irowor_drupal_module_update_9002() {
     ])->save();
   }
   \Drupal::service('entity_display.repository')
+    ->getFormDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_link', [
+      'type' => 'string_textfield',
+    ])
+    ->save();
+  \Drupal::service('entity_display.repository')
     ->getViewDisplay('block_content', $block_type_id, 'default')
     ->setComponent('field_link', [
       'label' => 'hidden',
@@ -76,6 +82,12 @@ function irowor_drupal_module_update_9002() {
     ])->save();
   }
   \Drupal::service('entity_display.repository')
+    ->getFormDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_title', [
+      'type' => 'string_textfield',
+    ])
+    ->save();
+  \Drupal::service('entity_display.repository')
     ->getViewDisplay('block_content', $block_type_id, 'default')
     ->setComponent('field_title', [
       'label' => 'hidden',
@@ -102,12 +114,18 @@ function irowor_drupal_module_update_9002() {
       'entity_type' => 'block_content',
       'bundle' => $block_type_id,
       'label' => 'field_is_reverse',
-      'required' => TRUE,
+      'required' => FALSE,
       'settings' => [
         'max_length' => 500,
       ],
     ])->save();
   }
+  \Drupal::service('entity_display.repository')
+    ->getFormDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_is_reverse', [
+      'type' => 'boolean_checkbox',
+    ])
+    ->save();
   \Drupal::service('entity_display.repository')
     ->getViewDisplay('block_content', $block_type_id)
     ->removeComponent('field_is_reverse')
@@ -133,8 +151,17 @@ function irowor_drupal_module_update_9002() {
       'bundle' => $block_type_id,
       'label' => 'field_image',
       'required' => TRUE,
+      'settings' => [
+        'alt_field_required' => FALSE,
+      ],
     ])->save();
   }
+  \Drupal::service('entity_display.repository')
+    ->getFormDisplay('block_content', $block_type_id, 'default')
+    ->setComponent('field_image', [
+      'type' => 'image_image',
+    ])
+    ->save();
   \Drupal::service('entity_display.repository')
     ->getViewDisplay('block_content', $block_type_id)
     ->setComponent('field_image', [
@@ -146,4 +173,9 @@ function irowor_drupal_module_update_9002() {
 
 }
 
+/**
+ * create an adv page
+**/
+function irowor_drupal_module_update_9005() {
+}
 
