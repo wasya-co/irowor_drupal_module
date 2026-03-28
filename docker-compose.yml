@@ -13,6 +13,10 @@ services:
       - type: bind
         source: config/settings.php
         target: /var/www/html/sites/default/settings.php
+      - type: bind
+        source: .
+        target: /var/www/html/modules/custom/irowor_drupal_module
+      - ./empty:/var/www/html/modules/custom/irowor_drupal_module/tmp
 
 volumes:
   irowor_data:
